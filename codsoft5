@@ -1,0 +1,85 @@
+#include <iostream>
+#include <vector>
+#include <iomanip>
+
+class Movie {
+public:
+    Movie(const std::string& title, double price, int totalSeats)
+        : title(title), price(price), totalSeats(totalSeats), availableSeats(totalSeats) {
+        for (int i = 0; i < totalSeats; ++i) {
+            seats.push_back(true); // Initialize all seats as available
+        }
+    }
+
+    void showMovieDetails() {
+        std::cout << "Movie: " << title << std::endl;
+        std::cout << "Price per ticket: $" << price << std::endl;
+        std::cout << "Available seats: " << availableSeats << std::endl;
+    }
+
+    bool bookSeats(int numSeats) {
+        if (numSeats > availableSeats) {
+            std::cout << "Not enough available seats." << std::endl;
+            return false;
+        }
+
+        std::cout << "Select seats (1-" << totalSeats << "): ";
+        for (int i = 0; i < numSeats; ++i) {
+            int seat;
+            std::cin >> seat;
+            
+            if (seat < 1 || seat > totalSeats || !seats[seat - 1]) {
+                std::cout << "Invalid seat selection." << std::endl;
+                return false;
+            }
+            
+            seats[seat - 1] = false;
+            availableSeats--;
+        }
+
+        double totalCost = numSeats * price;
+        std::cout << "Booked " << numSeats << " seats successfully. Total cost: $" << std::fixed << std::setprecision(2) << totalCost << std::endl;
+        return true;
+    }
+
+private:
+    std::string title;
+    double price;
+    int totalSeats;
+    int availableSeats;
+    std::vector<bool> seats;
+};
+
+int main() {
+    Movie movie("Example Movie", 10.0, 30);
+
+    while (true) {
+        std::cout << "1. View movie details" << std::endl;
+        std::cout << "2. Book seats" << std::endl;
+        std::cout << "3. Exit" << std::endl;
+
+        int choice;
+        std::cin >> choice;
+
+        switch (choice) {
+            case 1:
+                movie.showMovieDetails();
+                break;
+            case 2:
+                int numSeats;
+                std::cout << "Enter number of seats to book: ";
+                std::cin >> numSeats;
+                if (numSeats > 0) {
+                    movie.bookSeats(numSeats);
+                }
+                break;
+            case 3:
+                std::cout << "Exiting..." << std::endl;
+                return 0;
+            default:
+                std::cout << "Invalid choice." << std::endl;
+        }
+    }
+
+    return 0;
+}
